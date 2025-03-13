@@ -23,6 +23,9 @@ public class Wallet {
     private User user;
 
     @Column(nullable = false)
+    private String pin;
+
+    @Column(nullable = false)
     private BigDecimal balance;
 
     @Column(nullable = false)
