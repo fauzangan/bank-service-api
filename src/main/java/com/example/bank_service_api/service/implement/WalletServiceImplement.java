@@ -24,7 +24,7 @@ public class WalletServiceImplement implements WalletService {
     public WalletBalanceResponse getBalance(Long userId) {
         Wallet wallet = findWalletByUserId(userId);
         return WalletBalanceResponse.builder()
-                .wallet_id(wallet.getWalletId())
+                .wallet_id(wallet.getId())
                 .balance(wallet.getBalance())
                 .build();
     }
@@ -54,8 +54,8 @@ public class WalletServiceImplement implements WalletService {
 
         Transaction savedTransaction = transactionService.saveTransaction(newTransaction);
         return TransactionResponse.builder()
-                .transaction_id(savedTransaction.getTransactionId())
-                .user_id(savedTransaction.getWallet().getUser().getUserId())
+                .transaction_id(savedTransaction.getId())
+                .user_id(savedTransaction.getWallet().getUser().getId())
                 .amount(amount)
                 .updated_balance(savedTransaction.getAmount())
                 .timestamp(savedTransaction.getCreatedAt())
@@ -66,7 +66,7 @@ public class WalletServiceImplement implements WalletService {
     public Wallet findWalletByUserId(Long userId) {
         User user = userService.getUserById(userId);
         return walletRepository.findByUser(user).orElseThrow(
-                () -> new RuntimeException("Wallet not found for user with id:" + user.getUserId())
+                () -> new RuntimeException("Wallet not found for user with id:" + user.getId())
         );
     }
 }

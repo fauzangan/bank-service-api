@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long walletId;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
