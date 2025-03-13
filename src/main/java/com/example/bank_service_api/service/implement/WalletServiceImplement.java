@@ -1,5 +1,7 @@
 package com.example.bank_service_api.service.implement;
 
+import com.example.bank_service_api.dto.TransactionResponse;
+import com.example.bank_service_api.dto.WalletBalanceResponse;
 import com.example.bank_service_api.dto.WithdrawalRequest;
 import com.example.bank_service_api.model.*;
 import com.example.bank_service_api.repository.WalletRepository;
@@ -19,13 +21,16 @@ public class WalletServiceImplement implements WalletService {
     private final TransactionService transactionService;
 
     @Override
-    public BigDecimal getBalance(Long userId) {
+    public WalletBalanceResponse getBalance(Long userId) {
         Wallet wallet = findWalletByUserId(userId);
-        return wallet.getBalance();
+        return WalletBalanceResponse.builder()
+                .wallet_id(wallet.getWalletId())
+                .balance(wallet.getBalance())
+                .build();
     }
 
     @Override
-    public Transaction withdraw(WithdrawalRequest withdrawalRequest) {
+    public TransactionResponse withdraw(WithdrawalRequest withdrawalRequest) {
         Wallet wallet = findWalletByUserId(withdrawalRequest.getUserId());
         BigDecimal amount = withdrawalRequest.getAmount();
 
@@ -40,14 +45,21 @@ public class WalletServiceImplement implements WalletService {
         wallet.setBalance(wallet.getBalance().subtract(amount));
         walletRepository.save(wallet);
 
-        Transaction transaction = Transaction.builder()
+        Transaction newTransaction = Transaction.builder()
                 .wallet(wallet)
                 .amount(amount)
                 .type(TransactionType.WITHDRAWAL)
                 .status(TransactionStatus.COMPLETED)
                 .build();
 
-        return transactionService.saveTransaction(transaction);
+        Transaction savedTransaction = transactionService.saveTransaction(newTransaction);
+        return TransactionResponse.builder()
+                .transaction_id(savedTransaction.getTransactionId())
+                .user_id(savedTransaction.getWallet().getUser().getUserId())
+                .amount(amount)
+                .updated_balance(savedTransaction.getAmount())
+                .timestamp(savedTransaction.getCreatedAt())
+                .build();
     }
 
     @Override
