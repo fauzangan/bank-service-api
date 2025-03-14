@@ -17,7 +17,7 @@ This project implements retrieve balance and withdrawal using Spring Boot.
    spring.datasource.username=your_username
    spring.datasource.password=your_password
    ```
-3. In this Project has already have **Database Seeder** but if you want to make your own data, you can copy this query:
+3. In this Project already have **Database Seeder** but if you want to make your own data, you can copy this query:
    ```SQL
    INSERT INTO users (username, email, created_at) VALUES 
    ('user1', 'user1@example.com', NOW()),
