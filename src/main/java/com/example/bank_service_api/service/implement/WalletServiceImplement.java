@@ -3,6 +3,8 @@ package com.example.bank_service_api.service.implement;
 import com.example.bank_service_api.dto.TransactionResponse;
 import com.example.bank_service_api.dto.WalletBalanceResponse;
 import com.example.bank_service_api.dto.WithdrawalRequest;
+import com.example.bank_service_api.exception.InsufficientBalanceException;
+import com.example.bank_service_api.exception.ResourceNotFoundException;
 import com.example.bank_service_api.model.*;
 import com.example.bank_service_api.repository.WalletRepository;
 import com.example.bank_service_api.service.TransactionService;
@@ -31,7 +33,7 @@ public class WalletServiceImplement implements WalletService {
 
     @Override
     public TransactionResponse withdraw(WithdrawalRequest withdrawalRequest) {
-        Wallet wallet = findWalletByUserId(withdrawalRequest.getUserId());
+        Wallet wallet = findWalletByUserId(withdrawalRequest.getUser_id());
         BigDecimal amount = withdrawalRequest.getAmount();
 
         if (!wallet.getPin().equals(withdrawalRequest.getPin())){
@@ -39,11 +41,11 @@ public class WalletServiceImplement implements WalletService {
         }
 
         if (wallet.getBalance().compareTo(amount) < 0) {
-            throw new RuntimeException("Insufficient balance for withdrawal");
+            throw new InsufficientBalanceException("Insufficient balance for withdrawal");
         }
 
         wallet.setBalance(wallet.getBalance().subtract(amount));
-        walletRepository.save(wallet);
+        Wallet savedWallet = walletRepository.save(wallet);
 
         Transaction newTransaction = Transaction.builder()
                 .wallet(wallet)
@@ -57,7 +59,7 @@ public class WalletServiceImplement implements WalletService {
                 .transaction_id(savedTransaction.getId())
                 .user_id(savedTransaction.getWallet().getUser().getId())
                 .amount(amount)
-                .updated_balance(savedTransaction.getAmount())
+                .updated_balance(savedWallet.getBalance())
                 .timestamp(savedTransaction.getCreatedAt())
                 .build();
     }
@@ -66,7 +68,7 @@ public class WalletServiceImplement implements WalletService {
     public Wallet findWalletByUserId(Long userId) {
         User user = userService.getUserById(userId);
         return walletRepository.findByUser(user).orElseThrow(
-                () -> new RuntimeException("Wallet not found for user with id:" + user.getId())
+                () -> new ResourceNotFoundException("Wallet not found for user with id:" + user.getId())
         );
     }
 }

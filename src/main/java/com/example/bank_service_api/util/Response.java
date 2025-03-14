@@ -13,10 +13,10 @@ public class Response {
         return ResponseEntity.status(httpStatus).body(response);
     }
 
-    public static <T> ResponseEntity<?> renderError(T error, String message, HttpStatus httpStatus){
+    public static <T> ResponseEntity<?> renderError(String message, HttpStatus httpStatus){
         ErrorResponse<T> response = ErrorResponse.<T>builder()
-                .error(error)
-                .statusCode(httpStatus.getReasonPhrase())
+                .message(message)
+                .statusCode(httpStatus)
                 .build();
         return ResponseEntity.status(httpStatus).body(response);
     }

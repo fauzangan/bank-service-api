@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 public class WithdrawalRequest {
 
     @NotNull
-    private Long userId;
+    private Long user_id;
 
     @NotNull
     private String pin;

@@ -1,9 +1,7 @@
 package com.example.bank_service_api.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,6 +10,8 @@ import java.time.LocalDateTime;
 @Table(name = "transactions")
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Transaction {
     @Id
