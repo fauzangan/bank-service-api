@@ -3,6 +3,7 @@ package com.example.bank_service_api.service.implement;
 import com.example.bank_service_api.dto.TransactionResponse;
 import com.example.bank_service_api.dto.WalletBalanceResponse;
 import com.example.bank_service_api.dto.WithdrawalRequest;
+import com.example.bank_service_api.exception.IncorrectPINNumberException;
 import com.example.bank_service_api.exception.InsufficientBalanceException;
 import com.example.bank_service_api.exception.ResourceNotFoundException;
 import com.example.bank_service_api.model.*;
@@ -37,7 +38,7 @@ public class WalletServiceImplement implements WalletService {
         BigDecimal amount = withdrawalRequest.getAmount();
 
         if (!wallet.getPin().equals(withdrawalRequest.getPin())){
-            throw new RuntimeException("PIN is Incorrect");
+            throw new IncorrectPINNumberException("PIN is Incorrect");
         }
 
         if (wallet.getBalance().compareTo(amount) < 0) {

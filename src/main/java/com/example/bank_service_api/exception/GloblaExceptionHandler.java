@@ -25,6 +25,13 @@ public class GloblaExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(IncorrectPINNumberException.class)
+    public ResponseEntity<?> handleInsufficientBalanceException(IncorrectPINNumberException ex) {
+        return new ResponseEntity<>(
+                Response.renderError(ex.getMessage(), HttpStatus.BAD_REQUEST),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
         String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
